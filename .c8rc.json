@@ -1,5 +1,7 @@
 {
-  "reporter": ["text"],
+  "reporter": [
+    "text"
+  ],
   "all": true,
   "check-coverage": true,
   "include": [
