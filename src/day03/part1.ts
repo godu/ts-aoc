@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/prefer-code-point */
 import {identity, constant, flow, pipe, flip} from 'fp-ts/lib/function';
 import {char, parser} from 'parser-ts';
 import * as E from 'fp-ts/lib/Either';
@@ -33,32 +32,10 @@ const detectMisplacedItem = (rucksac: Rucksac): O.Option<Item> => {
 	return A.head(A.intersection(S.Eq)(compartmentA)(compartmentB));
 };
 
-const PRIORITIES: Record<Item, Priority> = pipe(
-	pipe(
-		NEA.range(65, 90),
-		NEA.map((code): [string, number] => [
-			String.fromCharCode(code),
-			code - 65 + 27,
-		]),
-	),
-	NEA.concat(
-		pipe(
-			NEA.range(97, 122),
-			NEA.map((code): [string, number] => [
-				String.fromCharCode(code),
-				code - 97 + 1,
-			]),
-		),
-	),
-	R.fromEntries,
-);
+const isUpperCase = (s: string) => s === S.toUpperCase(s);
 
-export const itemToPriority = flow(
-	flip<string, Record<string, Priority>, O.Option<Priority>>(R.lookup)(
-		PRIORITIES,
-	),
-	O.fold(constant(0), identity),
-);
+export const itemToPriority = (char: string) =>
+	(char.codePointAt(0) ?? 0) - (isUpperCase(char) ? 38 : 96);
 
 const solver: Solver = flow(
 	parse(inputParser),
