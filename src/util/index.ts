@@ -1,4 +1,4 @@
-import {char, parser, string} from 'parser-ts';
+import {parser, string} from 'parser-ts';
 import * as A from 'fp-ts/lib/Array';
 import {run} from 'parser-ts/lib/code-frame';
 import {pipe} from 'fp-ts/lib/function';
@@ -22,7 +22,14 @@ export const endOfLine = string.oneOf(A.array)(['\n', '\r\n']);
 
 export const endOfFile = pipe(endOfLine, parser.apFirst(parser.eof<string>()));
 
+export const add =
+	<A>(a: parser.Parser<string, A>) =>
+	<B>(b: parser.Parser<string, B>): parser.Parser<string, [B, A]> =>
+		parser.ap(a)(
+			parser.map((b: B) => (a: A): [B, A] => [b, a])(b),
+		);
+
 export const tuple =
-	<A>(a: A) =>
-	<B>(b: B): [A, B] =>
+	<B>(b: B) =>
+	<A>(a: A): [A, B] =>
 		[a, b];

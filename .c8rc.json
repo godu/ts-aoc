@@ -1,6 +1,7 @@
 {
   "reporter": [
-    "text"
+    "text",
+    "html"
   ],
   "all": true,
   "check-coverage": true,

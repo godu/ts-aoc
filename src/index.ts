@@ -1,4 +1,4 @@
-import {env, argv} from 'node:process';
+import {argv} from 'node:process';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';

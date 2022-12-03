@@ -1,5 +1,5 @@
 import {char, parser} from 'parser-ts';
-import {constant, flow, identity, pipe} from 'fp-ts/lib/function';
+import {constant, flip, flow, identity, pipe} from 'fp-ts/lib/function';
 import * as E from 'fp-ts/lib/Either';
 import * as A from 'fp-ts/lib/Array';
 import * as N from 'fp-ts/lib/number';
@@ -44,7 +44,10 @@ export const inputParser: parser.Parser<string, Turn[]> = parser.apFirst(
 				pipe(
 					char.space,
 					parser.apSecond(
-						parser.Functor.map(resultParser('X', 'Y', 'Z'), tuple(a)),
+						parser.Functor.map(
+							resultParser('X', 'Y', 'Z'),
+							flip<Result, Move, Turn>(tuple)(a),
+						),
 					),
 				),
 			),
