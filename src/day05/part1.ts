@@ -77,6 +77,12 @@ export const inputParser: parser.Parser<string, Input> = pipe(
 	parser.apFirst(endOfFile),
 );
 
+const tryModify =
+	(i: number) =>
+	<A>(a: A) =>
+	(as: A[]): A[] =>
+		pipe(as, A.updateAt(i, a), O.fold(constant(as), identity));
+
 export const unfoldMoves =
 	(rearrangeCrates: (crates: Crate[]) => Crate[] = A.reverse) =>
 	(stacks: Stack[], moves: Move[]) =>
@@ -102,21 +108,11 @@ export const unfoldMoves =
 					stacks,
 					O.fold<Stack, (stacks: Stack[]) => Stack[]>(
 						constant(identity),
-						(nextFrom) => (stacks) =>
-							pipe(
-								stacks,
-								A.updateAt(from, nextFrom),
-								O.fold(constant(stacks), identity),
-							),
+						tryModify(from),
 					)(nextFrom),
 					O.fold<Stack, (stacks: Stack[]) => Stack[]>(
 						constant(identity),
-						(nextTo) => (stacks) =>
-							pipe(
-								stacks,
-								A.updateAt(to, nextTo),
-								O.fold(constant(stacks), identity),
-							),
+						tryModify(to),
 					)(nextTo),
 				);
 			}),
