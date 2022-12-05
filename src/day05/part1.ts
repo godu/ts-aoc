@@ -16,8 +16,8 @@ import {type Solver} from '../type';
 import {add, endOfFile, endOfLine, parse, space} from '../util';
 
 type Crate = string;
-type Stack = Crate[];
-type Move = [number, [number, number]];
+export type Stack = Crate[];
+export type Move = [number, [number, number]];
 type Input = [Stack[], Move[]];
 
 const crateParser: parser.Parser<string, Crate> = pipe(
@@ -55,7 +55,7 @@ const moveParser: parser.Parser<string, Move> = pipe(
 	),
 );
 
-const inputParser: parser.Parser<string, Input> = pipe(
+export const inputParser: parser.Parser<string, Input> = pipe(
 	parser.sepBy1(endOfLine, stackRowParser),
 	parser.apFirst(endOfLine),
 	add(parser.sepBy1(space, pipe(string.int, parser.between(space, space)))),
@@ -77,50 +77,52 @@ const inputParser: parser.Parser<string, Input> = pipe(
 	parser.apFirst(endOfFile),
 );
 
-const unfoldMoves = (stacks: Stack[], moves: Move[]) =>
-	pipe(
-		moves,
-		// eslint-disable-next-line unicorn/no-array-reduce
-		A.reduce<Move, Stack[]>(stacks, (stacks, [howMany, [from, to]]) => {
-			const f = pipe(stacks, A.lookup(from), O.map(A.splitAt(howMany)));
-			const toMove = pipe(f, O.map(flow(T.fst, A.reverse)));
-			const nextFrom = pipe(f, O.map(T.snd));
-			const nextTo = pipe(
-				stacks,
-				A.lookup(to),
-				O.chain((to) =>
-					pipe(
-						toMove,
-						O.map((toMove) => [...toMove, ...to]),
+export const unfoldMoves =
+	(rearrangeCrates: (crates: Crate[]) => Crate[] = A.reverse) =>
+	(stacks: Stack[], moves: Move[]) =>
+		pipe(
+			moves,
+			// eslint-disable-next-line unicorn/no-array-reduce
+			A.reduce<Move, Stack[]>(stacks, (stacks, [howMany, [from, to]]) => {
+				const f = pipe(stacks, A.lookup(from), O.map(A.splitAt(howMany)));
+				const toMove = pipe(f, O.map(flow(T.fst, rearrangeCrates)));
+				const nextFrom = pipe(f, O.map(T.snd));
+				const nextTo = pipe(
+					stacks,
+					A.lookup(to),
+					O.chain((to) =>
+						pipe(
+							toMove,
+							O.map((toMove) => [...toMove, ...to]),
+						),
 					),
-				),
-			);
+				);
 
-			return pipe(
-				stacks,
-				O.fold<Stack, (stacks: Stack[]) => Stack[]>(
-					constant(identity),
-					(nextFrom) => (stacks) =>
-						pipe(
-							stacks,
-							A.updateAt(from, nextFrom),
-							O.fold(constant(stacks), identity),
-						),
-				)(nextFrom),
-				O.fold<Stack, (stacks: Stack[]) => Stack[]>(
-					constant(identity),
-					(nextTo) => (stacks) =>
-						pipe(
-							stacks,
-							A.updateAt(to, nextTo),
-							O.fold(constant(stacks), identity),
-						),
-				)(nextTo),
-			);
-		}),
-	);
+				return pipe(
+					stacks,
+					O.fold<Stack, (stacks: Stack[]) => Stack[]>(
+						constant(identity),
+						(nextFrom) => (stacks) =>
+							pipe(
+								stacks,
+								A.updateAt(from, nextFrom),
+								O.fold(constant(stacks), identity),
+							),
+					)(nextFrom),
+					O.fold<Stack, (stacks: Stack[]) => Stack[]>(
+						constant(identity),
+						(nextTo) => (stacks) =>
+							pipe(
+								stacks,
+								A.updateAt(to, nextTo),
+								O.fold(constant(stacks), identity),
+							),
+					)(nextTo),
+				);
+			}),
+		);
 
-const getAnwser = (stacks: Stack[]): string =>
+export const getAnwser = (stacks: Stack[]): string =>
 	pipe(
 		stacks,
 		A.map(flow(A.head, A.fromOption)),
@@ -130,7 +132,7 @@ const getAnwser = (stacks: Stack[]): string =>
 
 const solver: Solver = flow(
 	parse(inputParser),
-	E.fold(constant(''), flow(tupled(unfoldMoves), getAnwser)),
+	E.fold(constant(''), flow(tupled(unfoldMoves()), getAnwser)),
 );
 
 export default solver;
