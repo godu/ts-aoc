@@ -35,3 +35,31 @@ export const tuple =
 	<B>(b: B) =>
 	<A>(a: A): [A, B] =>
 		[a, b];
+
+const combine = <A>(y: A, h: A[], ys: A[], t: A[][]) => [
+	[y, ...h],
+	...transpose([ys, ...t]),
+];
+export const transpose = <A>(_: A[][]): A[][] =>
+	A.matchLeft<A[][], A[]>(
+		() => [],
+		(x, xss) =>
+			A.matchLeft<A[][], A>(
+				() => transpose(xss),
+				(x, xs) => {
+					const [hds, tls] = pipe(
+						xss,
+						A.map<A[], [A, A[]]>(
+							A.matchLeft<[A, A[]], A>(
+								() => {
+									throw new TypeError('Lists must be the same length');
+								},
+								(hd, tl) => [hd, tl],
+							),
+						),
+						A.unzip,
+					);
+					return combine<A>(x, hds, xs, tls);
+				},
+			)(x),
+	)(_);

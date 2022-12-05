@@ -13,7 +13,7 @@ import * as S from 'fp-ts/lib/string';
 import * as T from 'fp-ts/lib/Tuple';
 import {char, parser, string} from 'parser-ts';
 import {type Solver} from '../type';
-import {add, endOfFile, endOfLine, parse, space} from '../util';
+import {add, endOfFile, endOfLine, parse, space, transpose} from '../util';
 
 type Crate = string;
 export type Stack = Crate[];
@@ -58,19 +58,10 @@ const moveParser: parser.Parser<string, Move> = pipe(
 export const inputParser: parser.Parser<string, Input> = pipe(
 	parser.sepBy1(endOfLine, stackRowParser),
 	parser.apFirst(endOfLine),
-	add(parser.sepBy1(space, pipe(string.int, parser.between(space, space)))),
-	parser.map(([lines, stackIndexes]) => {
-		return pipe(
-			stackIndexes,
-			A.map<number, string[]>((index) =>
-				pipe(
-					lines,
-					A.map(flow(A.lookup(index - 1), O.flatten, A.fromOption)),
-					A.flatten,
-				),
-			),
-		);
-	}),
+	parser.apFirst(
+		parser.sepBy1(space, pipe(string.int, parser.between(space, space))),
+	),
+	parser.map(flow(transpose, A.map(flow(A.map(A.fromOption), A.flatten)))),
 	parser.apFirst(endOfLine),
 	parser.apFirst(endOfLine),
 	add(parser.sepBy1(endOfLine, moveParser)),
