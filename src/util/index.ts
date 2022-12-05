@@ -1,4 +1,4 @@
-import {parser, string} from 'parser-ts';
+import {char, parser, string} from 'parser-ts';
 import * as A from 'fp-ts/lib/Array';
 import {run} from 'parser-ts/lib/code-frame';
 import {pipe} from 'fp-ts/lib/function';
@@ -9,7 +9,7 @@ export const formatDay = (day: number | string) =>
 export const trace =
 	(message: string) =>
 	<T>(value: T): T => {
-		console.log(message, value);
+		console.log(message, JSON.stringify(value, null, 4));
 		return value;
 	};
 
@@ -21,6 +21,8 @@ export const parse =
 export const endOfLine = string.oneOf(A.array)(['\n', '\r\n']);
 
 export const endOfFile = pipe(endOfLine, parser.apFirst(parser.eof<string>()));
+
+export const space = char.char(' ');
 
 export const add =
 	<A>(a: parser.Parser<string, A>) =>
