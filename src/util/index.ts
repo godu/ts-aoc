@@ -9,7 +9,10 @@ export const formatDay = (day: number | string) =>
 export const trace =
 	(message: string) =>
 	<T>(value: T): T => {
-		console.log(message, JSON.stringify(value, null, 4));
+		console.log(
+			message,
+			typeof value === 'string' ? value : JSON.stringify(value, null, 4),
+		);
 		return value;
 	};
 
