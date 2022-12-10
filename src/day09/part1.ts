@@ -57,7 +57,7 @@ const move = (direction: Direction) =>
 		? moveUp
 		: moveDown;
 
-const inRange =
+export const inRange =
 	(min: number, max: number) =>
 	(x: number): boolean =>
 		min <= x && x <= max;
