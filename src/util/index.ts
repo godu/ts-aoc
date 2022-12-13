@@ -1,7 +1,10 @@
 import {char, parser, string} from 'parser-ts';
 import * as A from 'fp-ts/lib/Array';
+import * as M from 'fp-ts/lib/Map';
 import {run} from 'parser-ts/lib/code-frame';
 import {pipe} from 'fp-ts/lib/function';
+import {type Semigroup} from 'fp-ts/lib/Semigroup';
+import {type Eq} from 'fp-ts/lib/Eq';
 
 export const formatDay = (day: number | string) =>
 	day.toString().padStart(2, '0');
@@ -66,3 +69,26 @@ export const transpose = <A>(_: A[][]): A[][] =>
 				},
 			)(x),
 	)(_);
+
+export const take =
+	(n: number) =>
+	<T>(iter: Iterable<T>) => ({
+		*[Symbol.iterator]() {
+			if (n <= 0) return;
+			let i = n;
+			for (const o of iter) {
+				yield o;
+				i--;
+				if (i <= 0) return;
+			}
+		},
+	});
+
+export const groupBy =
+	<K, A>(E: Eq<K>, S: Semigroup<A>) =>
+	(ak: (a: A) => K) =>
+	(as: A[]): Map<K, A> =>
+		pipe(
+			as,
+			A.foldMap(M.getMonoid(E, S))((a) => M.singleton(ak(a), a)),
+		);
