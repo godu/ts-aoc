@@ -1,4 +1,5 @@
 import {type Show} from 'fp-ts/lib/Show';
+import * as S from 'fp-ts/lib/string';
 
 const unknownShow: Show<unknown> = {
 	show: (v) => JSON.stringify(v, null, 4),
@@ -17,3 +18,5 @@ export const traceId =
 	<A>(value: A): A => {
 		return traceShowId<A>(unknownShow)(message)(value);
 	};
+
+export const traceStringId = traceShowId(S.Show);
