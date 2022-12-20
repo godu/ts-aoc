@@ -5,7 +5,8 @@ import * as A from 'fp-ts/lib/Array';
 import * as N from 'fp-ts/lib/number';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
-import {endOfFile, endOfLine, parse, tuple} from '../util';
+import {endOfFile, endOfLine, parse} from '../util/parser';
+import {tuple} from '../util';
 import {
 	moveParser,
 	type Score,

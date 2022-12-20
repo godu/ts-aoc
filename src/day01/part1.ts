@@ -5,7 +5,7 @@ import * as A from 'fp-ts/lib/NonEmptyArray';
 import * as E from 'fp-ts/lib/Either';
 import * as N from 'fp-ts/lib/number';
 import {type Solver} from '../type';
-import {endOfFile, endOfLine, parse} from '../util';
+import {endOfFile, endOfLine, parse} from '../util/parser';
 
 export const inputParser = pipe(
 	parser.sepBy1(

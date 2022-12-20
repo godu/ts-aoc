@@ -6,7 +6,8 @@ import * as T from 'fp-ts/lib/Tuple';
 import * as N from 'fp-ts/lib/number';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
-import {endOfFile, endOfLine, parse, tuple} from '../util';
+import {endOfFile, endOfLine, parse} from '../util/parser';
+import {tuple} from '../util';
 
 export type Move = 'Scissors' | 'Paper' | 'Rock';
 export type Score = number;

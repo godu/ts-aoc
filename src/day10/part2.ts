@@ -1,12 +1,11 @@
-import {constant, flow, identity, pipe} from 'fp-ts/lib/function';
+import {constant, flow, identity} from 'fp-ts/lib/function';
 import * as A from 'fp-ts/lib/Array';
 import * as E from 'fp-ts/lib/Either';
-import * as S from 'fp-ts/lib/string';
 import * as NEA from 'fp-ts/lib/NonEmptyArray';
 import type * as M from 'fp-ts/lib/Monoid';
 import {type Solver} from '../type';
-import {parse} from '../util';
 import {inRange} from '../day09/part1';
+import {parse} from '../util/parser';
 import {cycles, inputParser} from './part1';
 
 const getMonoidJoin = (char: string): M.Monoid<string> => ({

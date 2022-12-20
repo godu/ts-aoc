@@ -7,7 +7,7 @@ import * as S from 'fp-ts/lib/string';
 import * as N from 'fp-ts/lib/number';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
-import {endOfFile, endOfLine, parse} from '../util';
+import {endOfFile, endOfLine, parse} from '../util/parser';
 
 export type Item = string;
 export type Rucksac = Item[];

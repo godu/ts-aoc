@@ -3,7 +3,7 @@ import * as E from 'fp-ts/lib/Either';
 import * as A from 'fp-ts/lib/Array';
 import * as S from 'fp-ts/lib/string';
 import {type Solver} from '../type';
-import {parse} from '../util';
+import {parse} from '../util/parser';
 import {inputParser, unfoldMoves, type Stack} from './part1';
 
 export const getAnwser = (stacks: Stack[]): string =>

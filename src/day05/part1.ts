@@ -13,7 +13,8 @@ import * as S from 'fp-ts/lib/string';
 import * as T from 'fp-ts/lib/Tuple';
 import {char, parser, string} from 'parser-ts';
 import {type Solver} from '../type';
-import {add, endOfFile, endOfLine, parse, space, transpose} from '../util';
+import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
+import {transpose} from '../util/matrix';
 
 type Crate = string;
 export type Stack = Crate[];

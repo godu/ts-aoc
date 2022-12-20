@@ -6,7 +6,8 @@ import * as N from 'fp-ts/lib/number';
 import {stringify} from 'fp-ts/lib/Json';
 import * as M from 'fp-ts/lib/Monoid';
 import {type Solver} from '../type';
-import {parse, transpose} from '../util';
+import {transpose} from '../util/matrix';
+import {parse} from '../util/parser';
 import {foldMap, inputParser, zipzipWith} from './part1';
 
 const scenicScore: (as: number[]) => number[] = A.matchLeft(

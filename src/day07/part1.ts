@@ -6,7 +6,7 @@ import * as A from 'fp-ts/lib/Array';
 import * as N from 'fp-ts/lib/number';
 import {parser, string} from 'parser-ts';
 import {type Solver} from '../type';
-import {add, endOfFile, endOfLine, parse, space} from '../util';
+import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
 
 type Path = string;
 type Size = number;

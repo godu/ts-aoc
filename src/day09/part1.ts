@@ -14,7 +14,7 @@ import {char, parser, string} from 'parser-ts';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Eq} from 'fp-ts/lib/Eq';
 import {type Solver} from '../type';
-import {add, endOfFile, endOfLine, parse, space} from '../util';
+import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
 
 type Direction = 'R' | 'U' | 'L' | 'D';
 type Command = [Direction, number];
@@ -36,7 +36,7 @@ export const inputParser = pipe(
 	parser.apFirst(endOfFile),
 );
 
-type Point = [number, number];
+export type Point = [number, number];
 
 export const pointEq: Eq<Point> = {
 	equals: ([xx, xy], [yx, yy]) => xx === yx && xy === yy,

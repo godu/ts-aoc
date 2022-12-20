@@ -4,7 +4,7 @@ import * as A from 'fp-ts/lib/Array';
 import * as E from 'fp-ts/lib/Either';
 import {char, parser, string} from 'parser-ts';
 import {type Solver} from '../type';
-import {add, endOfLine, parse} from '../util';
+import {add, endOfLine, parse} from '../util/parser';
 
 type Section = number;
 export type Range = [Section, Section];

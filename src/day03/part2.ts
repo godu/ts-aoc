@@ -7,7 +7,7 @@ import * as S from 'fp-ts/lib/string';
 import * as N from 'fp-ts/lib/number';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
-import {add, endOfFile, endOfLine, parse} from '../util';
+import {add, endOfFile, endOfLine, parse} from '../util/parser';
 import {type Item, rucksacParser, type Rucksac, itemToPriority} from './part1';
 
 type Group = readonly [Rucksac, Rucksac, Rucksac];

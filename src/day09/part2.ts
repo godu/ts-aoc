@@ -4,7 +4,7 @@ import * as E from 'fp-ts/lib/Either';
 import * as O from 'fp-ts/lib/Option';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
-import {parse} from '../util';
+import {parse} from '../util/parser';
 import {inputParser, moveRope, pointEq} from './part1';
 
 const solver: Solver = flow(

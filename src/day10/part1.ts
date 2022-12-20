@@ -6,7 +6,7 @@ import * as O from 'fp-ts/lib/Option';
 import * as N from 'fp-ts/lib/number';
 import {parser, string} from 'parser-ts';
 import {type Solver} from '../type';
-import {add, endOfFile, endOfLine, parse, space} from '../util';
+import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
 
 type Instruction = 'noop' | ['addx', number];
 

@@ -6,7 +6,7 @@ import * as A from 'fp-ts/lib/Array';
 import * as N from 'fp-ts/lib/number';
 import * as O from 'fp-ts/lib/Option';
 import {type Solver} from '../type';
-import {parse} from '../util';
+import {parse} from '../util/parser';
 import {commandsToFileSystem, directories, inputParser, size} from './part1';
 
 const solver: Solver = flow(

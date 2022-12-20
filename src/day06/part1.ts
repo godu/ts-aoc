@@ -6,8 +6,9 @@ import * as ROA from 'fp-ts/lib/ReadonlyArray';
 import * as E from 'fp-ts/lib/Either';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
+import {type Matrix} from '../util/matrix';
 
-export const inits = <A>(as: A[]): A[][] =>
+export const inits = <A>(as: A[]): Matrix<A> =>
 	pipe(
 		as,
 		A.scanLeft<A, A[]>([], (bs, a) => [...bs, a]),

@@ -7,9 +7,10 @@ import * as N from 'fp-ts/lib/number';
 import {stringify} from 'fp-ts/lib/Json';
 import {char, parser} from 'parser-ts';
 import {type Solver} from '../type';
-import {endOfFile, endOfLine, parse, transpose} from '../util';
+import {type Matrix, transpose} from '../util/matrix';
+import {endOfFile, endOfLine, parse} from '../util/parser';
 
-export const inputParser: parser.Parser<string, number[][]> = pipe(
+export const inputParser: parser.Parser<string, Matrix<number>> = pipe(
 	parser.sepBy1(
 		endOfLine,
 		pipe(parser.many1(pipe(char.digit, parser.map(Number.parseInt)))),
@@ -18,8 +19,8 @@ export const inputParser: parser.Parser<string, number[][]> = pipe(
 );
 
 export const zipzipWith = <A, B, C>(
-	fa: A[][],
-	fb: B[][],
+	fa: Matrix<A>,
+	fb: Matrix<B>,
 	f: (a: A, b: B) => C,
 ) => A.zipWith(fa, fb, (a, b) => A.zipWith(a, b, f));
 
@@ -34,7 +35,7 @@ export const isVisible = (as: number[]) => pipe(as, isVisible_(-1));
 export const foldMap =
 	<B>(m: M.Monoid<B>) =>
 	<A>(f: (a: A) => B) =>
-	(fa: A[][]): B =>
+	(fa: Matrix<A>): B =>
 		A.foldMap(m)(A.foldMap(m)(f))(fa);
 
 const solver: Solver = flow(

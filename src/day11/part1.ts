@@ -9,7 +9,9 @@ import {stringify} from 'fp-ts/lib/Json';
 import {type Semigroup} from 'fp-ts/lib/Semigroup';
 import {type Eq} from 'fp-ts/lib/Eq';
 import {type Solver} from '../type';
-import {add, endOfFile, endOfLine, groupBy, parse, space, take} from '../util';
+import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
+import {groupBy} from '../util';
+import {take} from '../util/iterable';
 
 const monkeyIndexParser: parser.Parser<string, number> = pipe(
 	string.string('Monkey '),

@@ -256,3 +256,17 @@ export const getMonoid = <A>(): Monoid<Iterable<A>> => ({
 	empty: from([]),
 	concat: (x, y) => concat(y)(x),
 });
+
+export const take =
+	(n: number) =>
+	<T>(iter: Iterable<T>) => ({
+		*[Symbol.iterator]() {
+			if (n <= 0) return;
+			let i = n;
+			for (const o of iter) {
+				yield o;
+				i--;
+				if (i <= 0) return;
+			}
+		},
+	});

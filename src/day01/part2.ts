@@ -6,7 +6,7 @@ import * as N from 'fp-ts/lib/number';
 import * as O from 'fp-ts/lib/Ord';
 import * as T from 'fp-ts/lib/Tuple';
 import {type Solver} from '../type';
-import {parse} from '../util';
+import {parse} from '../util/parser';
 import {inputParser} from './part1';
 
 const solver: Solver = flow(
