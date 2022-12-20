@@ -1,5 +1,14 @@
 import * as A from 'fp-ts/lib/Array';
+import * as O from 'fp-ts/lib/Option';
+import {type Eq} from 'fp-ts/lib/Eq';
 import {pipe} from 'fp-ts/lib/function';
+import {type Predicate} from 'fp-ts/lib/Predicate';
+
+export type Point = [number, number];
+
+export const pointEq: Eq<Point> = {
+	equals: ([xx, xy], [yx, yy]) => xx === yx && xy === yy,
+};
 
 export type Matrix<A> = A[][];
 
@@ -31,3 +40,20 @@ export const transpose = <A>(_: Matrix<A>): Matrix<A> =>
 				},
 			)(x),
 	)(_);
+
+export const lookup =
+	([i, j]: Point) =>
+	<A>(xss: Matrix<A>) =>
+		pipe(xss, A.lookup(i), O.chain(A.lookup(j)));
+
+export const findIndex =
+	<A>(p: Predicate<A>) =>
+	(xss: Matrix<A>): O.Option<Point> => {
+		for (const [i, xs] of xss.entries()) {
+			for (const [j, x] of xs.entries()) {
+				if (p(x)) return O.some([i, j]);
+			}
+		}
+
+		return O.none;
+	};

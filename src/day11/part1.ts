@@ -164,7 +164,11 @@ const rounds =
 				A.foldMap(N.MonoidProduct)((m) => m.test[0]),
 			);
 
-			let mapMonkeys = groupBy(N.Eq, monkeySemigroup)((m) => m.index)(monkeys);
+			let mapMonkeys = groupBy(
+				N.Eq,
+				A.Foldable,
+				monkeySemigroup,
+			)((m): number => m.index)(monkeys);
 
 			while (true) {
 				for (const monkeyIndex of monkeyOrder) {

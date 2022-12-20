@@ -12,7 +12,7 @@ import * as E from 'fp-ts/lib/Either';
 import * as O from 'fp-ts/lib/Option';
 import {char, parser, string} from 'parser-ts';
 import {stringify} from 'fp-ts/lib/Json';
-import {type Eq} from 'fp-ts/lib/Eq';
+import * as M from '../util/matrix';
 import {type Solver} from '../type';
 import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
 
@@ -36,18 +36,12 @@ export const inputParser = pipe(
 	parser.apFirst(endOfFile),
 );
 
-export type Point = [number, number];
+type Rope = M.Point[];
 
-export const pointEq: Eq<Point> = {
-	equals: ([xx, xy], [yx, yy]) => xx === yx && xy === yy,
-};
-
-type Rope = Point[];
-
-const moveUp: (p: Point) => Point = T.mapFst(increment);
-const moveDown: (p: Point) => Point = T.mapFst(decrement);
-const moveRight: (p: Point) => Point = T.mapSnd(increment);
-const moveLeft: (p: Point) => Point = T.mapSnd(decrement);
+const moveUp: (p: M.Point) => M.Point = T.mapFst(increment);
+const moveDown: (p: M.Point) => M.Point = T.mapFst(decrement);
+const moveRight: (p: M.Point) => M.Point = T.mapSnd(increment);
+const moveLeft: (p: M.Point) => M.Point = T.mapSnd(decrement);
 const move = (direction: Direction) =>
 	direction === 'R'
 		? moveRight
@@ -63,11 +57,11 @@ export const inRange =
 		min <= x && x <= max;
 
 const isTouching =
-	([px, py]: Point) =>
-	([qx, qy]: Point) =>
+	([px, py]: M.Point) =>
+	([qx, qy]: M.Point) =>
 		inRange(-1, 1)(px - qx) && inRange(-1, 1)(py - qy);
 
-const moveKnot = ([hx, hy]: Point, [tx, ty]: Point): Point => {
+const moveKnot = ([hx, hy]: M.Point, [tx, ty]: M.Point): M.Point => {
 	if (isTouching([hx, hy])([tx, ty])) return [tx, ty];
 	const [dx, dy] = [hx - tx, hy - ty];
 
@@ -88,10 +82,13 @@ export const moveRope =
 				return pipe(
 					knots,
 					A.matchLeft(
-						(): Point[] => [],
+						(): M.Point[] => [],
 						(head, tail) => {
 							const nextHead = move(direction)(head);
-							return pipe(tail, A.scanLeft<Point, Point>(nextHead, moveKnot));
+							return pipe(
+								tail,
+								A.scanLeft<M.Point, M.Point>(nextHead, moveKnot),
+							);
 						},
 					),
 				);
@@ -109,7 +106,7 @@ const solver: Solver = flow(
 			]),
 			A.map(A.last),
 			A.sequence(O.Applicative),
-			O.map(flow(A.uniq(pointEq), A.size)),
+			O.map(flow(A.uniq(M.pointEq), A.size)),
 			E.fromOption(constant('')),
 			E.chain(stringify),
 		),

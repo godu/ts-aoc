@@ -1,6 +1,61 @@
-import {identity} from 'fp-ts/lib/function';
+import {constant, constFalse, flow, identity, pipe} from 'fp-ts/lib/function';
+import * as A from 'fp-ts/lib/Array';
+import * as E from 'fp-ts/lib/Either';
+import * as O from 'fp-ts/lib/Option';
+import * as T from 'fp-ts/lib/Tuple';
+import {stringify} from 'fp-ts/lib/Json';
+import {parse} from '../util/parser';
 import {type Solver} from '../type';
+import * as M from '../util/matrix';
+import {dijkstra} from '../util/search';
+import {
+	type HeightMap,
+	inputParser,
+	toHeight,
+	neighbors,
+	type Height,
+} from './part1';
 
-const solver: Solver = identity;
+const end = M.findIndex<Height>(([, type]) => type === 'E');
+
+const fewestSteps = (heightMap: HeightMap) => {
+	const next = (point: M.Point): M.Point[] => {
+		const height = pipe(point, toHeight(heightMap), O.getOrElse(constant(0)));
+		return pipe(
+			point,
+			neighbors,
+			A.filter((point) =>
+				pipe(
+					point,
+					toHeight(heightMap),
+					O.chain(O.fromPredicate((h) => h >= height - 1)),
+					O.isSome,
+				),
+			),
+		);
+	};
+
+	const cost = constant(1);
+
+	const found = (point: M.Point): boolean =>
+		pipe(
+			heightMap,
+			M.lookup(point),
+			O.fold(constFalse, ([, type]) => type === 'a'),
+		);
+
+	return pipe(
+		heightMap,
+		end,
+		O.chain(dijkstra<M.Point>(M.pointEq)(next, cost, found)),
+		O.map(T.fst),
+	);
+};
+
+const solver: Solver = flow(
+	parse(inputParser),
+	E.chain(flow(fewestSteps, O.getOrElse(constant(0)), stringify)),
+	E.fold(constant(''), identity),
+);
 
 export default solver;
