@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
+import * as A from 'fp-ts/lib/Array';
 import * as M from 'fp-ts/lib/Map';
 import {type Semigroup} from 'fp-ts/lib/Semigroup';
 import {type Eq} from 'fp-ts/lib/Eq';
@@ -18,3 +19,5 @@ export const groupBy =
 	(ak: (a: A) => K) =>
 	(as: Kind<F, A>): Map<K, A> =>
 		F.foldMap(M.getMonoid(E, S))<A>(as, (a) => M.singleton(ak(a), a));
+
+export const pairs = <A>(a: A[]) => A.zip(a, A.dropLeft(1)(a));

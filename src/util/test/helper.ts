@@ -1,5 +1,6 @@
-// eslint-disable-next-line ava/use-test
+/* eslint-disable ava/use-test */
 import {type ExecutionContext} from 'ava';
+import {timingIO} from '../debug';
 
 export const resolveInput = (
 	t: ExecutionContext,
@@ -7,5 +8,5 @@ export const resolveInput = (
 	input: string,
 	expected: string,
 ) => {
-	t.is(part(input), expected);
+	t.is(timingIO(t.log)('part')(part)(input), expected);
 };

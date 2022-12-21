@@ -13,8 +13,9 @@ import {type Applicative1} from 'fp-ts/lib/Applicative';
 import {type Filterable1} from 'fp-ts/lib/Filterable';
 import * as S from 'fp-ts/lib/Separated';
 import {type Refinement} from 'fp-ts/lib/Refinement';
-import {pipe} from 'fp-ts/lib/function';
+import {constFalse, pipe} from 'fp-ts/lib/function';
 import {type Compactable1} from 'fp-ts/lib/Compactable';
+import {type Unfoldable1} from 'fp-ts/lib/Unfoldable';
 
 export const URI = 'Iterable';
 
@@ -270,3 +271,26 @@ export const take =
 			}
 		},
 	});
+
+export const unfold = <A, B>(
+	b: B,
+	f: (b: B) => O.Option<readonly [A, B]>,
+): Iterable<A> => ({
+	*[Symbol.iterator]() {
+		let bb = b;
+		while (true) {
+			const orn = f(b);
+
+			if (O.isNone(orn)) return;
+
+			const [r, n] = orn.value;
+			yield r;
+			bb = n;
+		}
+	},
+});
+
+export const Unfoldable: Unfoldable1<URI> = {
+	URI,
+	unfold,
+};
