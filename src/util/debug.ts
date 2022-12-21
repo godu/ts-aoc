@@ -1,3 +1,4 @@
+import {identity} from 'fp-ts/lib/function';
 import {type Show} from 'fp-ts/lib/Show';
 import * as S from 'fp-ts/lib/string';
 
@@ -19,4 +20,6 @@ export const traceId =
 		return traceShowId<A>(unknownShow)(message)(value);
 	};
 
-export const traceStringId = traceShowId(S.Show);
+export const traceStringId = traceShowId<string>({
+	show: identity,
+});
