@@ -7,6 +7,7 @@ import {stringify} from 'fp-ts/lib/Json';
 import {parse} from '../util/parser';
 import {type Solver} from '../type';
 import * as M from '../util/matrix';
+import * as P from '../util/point';
 import {dijkstra} from '../util/search';
 import {
 	type HeightMap,
@@ -19,7 +20,7 @@ import {
 const end = M.findIndex<Height>(([, type]) => type === 'E');
 
 const fewestSteps = (heightMap: HeightMap) => {
-	const next = (point: M.Point): M.Point[] => {
+	const next = (point: P.Point): P.Point[] => {
 		const height = pipe(point, toHeight(heightMap), O.getOrElse(constant(0)));
 		return pipe(
 			point,
@@ -37,7 +38,7 @@ const fewestSteps = (heightMap: HeightMap) => {
 
 	const cost = constant(1);
 
-	const found = (point: M.Point): boolean =>
+	const found = (point: P.Point): boolean =>
 		pipe(
 			heightMap,
 			M.lookup(point),
@@ -47,7 +48,7 @@ const fewestSteps = (heightMap: HeightMap) => {
 	return pipe(
 		heightMap,
 		end,
-		O.chain(dijkstra<M.Point>(M.pointEq)(next, cost, found)),
+		O.chain(dijkstra<P.Point>(P.Eq)(next, cost, found)),
 		O.map(T.fst),
 	);
 };

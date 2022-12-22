@@ -8,5 +8,5 @@ export const resolveInput = (
 	input: string,
 	expected: string,
 ) => {
-	t.is(timingIO(t.log)('part')(part)(input), expected);
+	t.is(timingIO(t.log)('Duration: ')(part)(input), expected);
 };

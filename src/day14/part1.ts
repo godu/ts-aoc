@@ -19,7 +19,7 @@ import * as P from 'fp-ts/lib/Predicate';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Monoid} from 'fp-ts/lib/Monoid';
 import {type Solver} from '../type';
-import {pointRange, type Point} from '../util/matrix';
+import * as PP from '../util/point';
 import {add, endOfFile, endOfLine, parse} from '../util/parser';
 import {pairs} from '../util';
 
@@ -31,13 +31,13 @@ export const WallUnionMonoid: Monoid<Wall> = M.getUnionMonoid(
 	SS.getUnionSemigroup(N.Eq),
 );
 
-export const wallFromList: (points: Point[]) => Wall = A.reduce(
+export const wallFromList: (points: PP.Point[]) => Wall = A.reduce(
 	new Map<number, Set<number>>(),
 	(wall, point) => append(point)(wall),
 );
 
 const append =
-	([x, y]: Point) =>
+	([x, y]: PP.Point) =>
 	(wall: Wall): Wall =>
 		WallUnionMonoid.concat(
 			wall,
@@ -45,7 +45,7 @@ const append =
 		);
 
 const member =
-	([x, y]: Point) =>
+	([x, y]: PP.Point) =>
 	(as: Wall): boolean =>
 		pipe(
 			as,
@@ -54,7 +54,7 @@ const member =
 			O.getOrElse(constFalse),
 		);
 
-const pointParser: parser.Parser<string, Point> = pipe(
+const pointParser: parser.Parser<string, PP.Point> = pipe(
 	string.int,
 	parser.apFirst(string.string(',')),
 	add(string.int),
@@ -66,7 +66,7 @@ const wallParser: parser.Parser<string, Wall> = pipe(
 		pipe(
 			v,
 			pairs,
-			A.chain(([x, y]) => pointRange(x, y)),
+			A.chain(([x, y]) => PP.range(x, y)),
 			wallFromList,
 		),
 	),
@@ -84,7 +84,7 @@ const caveParser: parser.Parser<string, Cave> = pipe(
 
 export const inputParser = pipe(caveParser, parser.apFirst(endOfFile));
 
-const isFree = (point: Point): P.Predicate<Cave> =>
+const isFree = (point: PP.Point): P.Predicate<Cave> =>
 	pipe(
 		P.not<Cave>(flow(T.fst, member(point))),
 		P.and(P.not(flow(T.snd, member(point)))),
@@ -96,7 +96,7 @@ export const yFloor: (wall: Wall) => O.Option<number> = flow(
 );
 
 const lowerThan =
-	([, y]: Point) =>
+	([, y]: PP.Point) =>
 	(wall: Wall) =>
 		pipe(
 			wall,
@@ -105,7 +105,7 @@ const lowerThan =
 		);
 
 export const gravity =
-	(point: Point) =>
+	(point: PP.Point) =>
 	(cave: Cave): O.Option<Cave> => {
 		const [walls, points] = cave;
 		const [x, y] = point;
@@ -114,13 +114,13 @@ export const gravity =
 
 		if (lowerThan(point)(walls)) return O.none;
 
-		const down: Point = [x, y + 1];
+		const down: PP.Point = [x, y + 1];
 		if (isFree(down)(cave)) return gravity(down)(cave);
 
-		const diagonalLeft: Point = [x - 1, y + 1];
+		const diagonalLeft: PP.Point = [x - 1, y + 1];
 		if (isFree(diagonalLeft)(cave)) return gravity(diagonalLeft)(cave);
 
-		const diagonalRight: Point = [x + 1, y + 1];
+		const diagonalRight: PP.Point = [x + 1, y + 1];
 		if (isFree(diagonalRight)(cave)) return gravity(diagonalRight)(cave);
 
 		return O.some([walls, append(point)(points)]);

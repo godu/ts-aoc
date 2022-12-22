@@ -13,6 +13,7 @@ import * as O from 'fp-ts/lib/Option';
 import {char, parser, string} from 'parser-ts';
 import {stringify} from 'fp-ts/lib/Json';
 import * as M from '../util/matrix';
+import * as P from '../util/point';
 import {type Solver} from '../type';
 import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
 
@@ -36,12 +37,12 @@ export const inputParser = pipe(
 	parser.apFirst(endOfFile),
 );
 
-type Rope = M.Point[];
+type Rope = P.Point[];
 
-const moveUp: (p: M.Point) => M.Point = T.mapFst(increment);
-const moveDown: (p: M.Point) => M.Point = T.mapFst(decrement);
-const moveRight: (p: M.Point) => M.Point = T.mapSnd(increment);
-const moveLeft: (p: M.Point) => M.Point = T.mapSnd(decrement);
+const moveUp: (p: P.Point) => P.Point = T.mapFst(increment);
+const moveDown: (p: P.Point) => P.Point = T.mapFst(decrement);
+const moveRight: (p: P.Point) => P.Point = T.mapSnd(increment);
+const moveLeft: (p: P.Point) => P.Point = T.mapSnd(decrement);
 const move = (direction: Direction) =>
 	direction === 'R'
 		? moveRight
@@ -57,11 +58,11 @@ export const inRange =
 		min <= x && x <= max;
 
 const isTouching =
-	([px, py]: M.Point) =>
-	([qx, qy]: M.Point) =>
+	([px, py]: P.Point) =>
+	([qx, qy]: P.Point) =>
 		inRange(-1, 1)(px - qx) && inRange(-1, 1)(py - qy);
 
-const moveKnot = ([hx, hy]: M.Point, [tx, ty]: M.Point): M.Point => {
+const moveKnot = ([hx, hy]: P.Point, [tx, ty]: P.Point): P.Point => {
 	if (isTouching([hx, hy])([tx, ty])) return [tx, ty];
 	const [dx, dy] = [hx - tx, hy - ty];
 
@@ -82,12 +83,12 @@ export const moveRope =
 				return pipe(
 					knots,
 					A.matchLeft(
-						(): M.Point[] => [],
+						(): P.Point[] => [],
 						(head, tail) => {
 							const nextHead = move(direction)(head);
 							return pipe(
 								tail,
-								A.scanLeft<M.Point, M.Point>(nextHead, moveKnot),
+								A.scanLeft<P.Point, P.Point>(nextHead, moveKnot),
 							);
 						},
 					),
@@ -106,7 +107,7 @@ const solver: Solver = flow(
 			]),
 			A.map(A.last),
 			A.sequence(O.Applicative),
-			O.map(flow(A.uniq(M.pointEq), A.size)),
+			O.map(flow(A.uniq(P.Eq), A.size)),
 			E.fromOption(constant('')),
 			E.chain(stringify),
 		),

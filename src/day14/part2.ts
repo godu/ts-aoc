@@ -5,7 +5,7 @@ import * as O from 'fp-ts/lib/Option';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
 import {parse} from '../util/parser';
-import {pointRange} from '../util/matrix';
+import * as P from '../util/point';
 import {
 	type Cave,
 	gravity,
@@ -24,9 +24,7 @@ const addFloor = ([walls, points]: Cave): O.Option<Cave> =>
 		O.map(
 			(yFloor): Cave => [
 				WallUnionMonoid.concat(
-					wallFromList(
-						pointRange([500 - yFloor, yFloor], [500 + yFloor, yFloor]),
-					),
+					wallFromList(P.range([500 - yFloor, yFloor], [500 + yFloor, yFloor])),
 					walls,
 				),
 				points,

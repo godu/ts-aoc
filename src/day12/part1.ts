@@ -9,6 +9,7 @@ import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
 import {endOfFile, endOfLine, parse} from '../util/parser';
 import * as M from '../util/matrix';
+import * as P from '../util/point';
 import {dijkstra} from '../util/search';
 
 export type Height = [number, string];
@@ -39,7 +40,7 @@ const heightMapParser = pipe(
 export const inputParser = pipe(heightMapParser, parser.apFirst(endOfFile));
 
 const start = M.findIndex<Height>(([, type]) => type === 'S');
-export const neighbors = ([i, j]: M.Point): M.Point[] => [
+export const neighbors = ([i, j]: P.Point): P.Point[] => [
 	[i - 1, j],
 	[i, j - 1],
 	[i, j + 1],
@@ -48,11 +49,11 @@ export const neighbors = ([i, j]: M.Point): M.Point[] => [
 
 export const toHeight =
 	(heightMap: HeightMap) =>
-	(point: M.Point): O.Option<number> =>
+	(point: P.Point): O.Option<number> =>
 		pipe(heightMap, M.lookup(point), O.map(T.fst));
 
 const fewestSteps = (heightMap: HeightMap) => {
-	const next = (point: M.Point): M.Point[] => {
+	const next = (point: P.Point): P.Point[] => {
 		const height = pipe(point, toHeight(heightMap), O.getOrElse(constant(0)));
 		return pipe(
 			point,
@@ -70,7 +71,7 @@ const fewestSteps = (heightMap: HeightMap) => {
 
 	const cost = constant(1);
 
-	const found = (point: M.Point): boolean =>
+	const found = (point: P.Point): boolean =>
 		pipe(
 			heightMap,
 			M.lookup(point),
@@ -80,7 +81,7 @@ const fewestSteps = (heightMap: HeightMap) => {
 	return pipe(
 		heightMap,
 		start,
-		O.chain(dijkstra<M.Point>(M.pointEq)(next, cost, found)),
+		O.chain(dijkstra<P.Point>(P.Eq)(next, cost, found)),
 		O.map(T.fst),
 	);
 };
