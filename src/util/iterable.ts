@@ -13,7 +13,7 @@ import {type Applicative1} from 'fp-ts/lib/Applicative';
 import {type Filterable1} from 'fp-ts/lib/Filterable';
 import * as S from 'fp-ts/lib/Separated';
 import {type Refinement} from 'fp-ts/lib/Refinement';
-import {constFalse, pipe} from 'fp-ts/lib/function';
+import {flow, pipe} from 'fp-ts/lib/function';
 import {type Compactable1} from 'fp-ts/lib/Compactable';
 import {type Unfoldable1} from 'fp-ts/lib/Unfoldable';
 
@@ -33,6 +33,8 @@ export const of = <A>(a: A): Iterable<A> => ({
 		yield a;
 	},
 });
+
+export const empty = <A>() => from<A>([]);
 
 export const from = <A>(as: Iterable<A>): Iterable<A> => ({
 	*[Symbol.iterator]() {
@@ -129,16 +131,6 @@ export const Chain: Chain1<URI> = {
 	...Apply,
 	chain: (fa, f) => chain(f)(fa),
 };
-
-export const findFirst =
-	<T>(p: Predicate<T>) =>
-	(i: Iterable<T>): O.Option<T> => {
-		for (const j of i) {
-			if (p(j)) return O.some(j);
-		}
-
-		return O.none;
-	};
 
 export const compact = <A>(fa: Iterable<O.Option<A>>): Iterable<A> =>
 	pipe(
@@ -258,6 +250,15 @@ export const getMonoid = <A>(): Monoid<Iterable<A>> => ({
 	concat: (x, y) => concat(y)(x),
 });
 
+export const head = <T>(iter: Iterable<T>): O.Option<T> => {
+	// eslint-disable-next-line no-unreachable-loop
+	for (const o of iter) {
+		return O.some(o);
+	}
+
+	return O.none;
+};
+
 export const take =
 	(n: number) =>
 	<T>(iter: Iterable<T>) => ({
@@ -271,6 +272,10 @@ export const take =
 			}
 		},
 	});
+
+export const findFirst = <T>(
+	p: Predicate<T>,
+): ((as: Iterable<T>) => O.Option<T>) => flow(filter(p), head);
 
 export const unfold = <A, B>(
 	b: B,

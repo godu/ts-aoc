@@ -4,6 +4,7 @@ import * as A from 'fp-ts/lib/Array';
 import * as E from 'fp-ts/lib/Either';
 import * as O from 'fp-ts/lib/Option';
 import * as T from 'fp-ts/lib/Tuple';
+import * as N from 'fp-ts/lib/number';
 import {char, parser} from 'parser-ts';
 import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
@@ -81,7 +82,13 @@ const fewestSteps = (heightMap: HeightMap) => {
 	return pipe(
 		heightMap,
 		start,
-		O.chain(dijkstra<P.Point>(P.Eq)(next, cost, found)),
+		O.chain(
+			dijkstra<P.Point, number>(P.Ord, {...N.MonoidSum, ...N.Ord})(
+				next,
+				cost,
+				found,
+			),
+		),
 		O.map(T.fst),
 	);
 };
