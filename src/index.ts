@@ -4,6 +4,7 @@ import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
 import {formatDay} from './util';
 import {type Solver} from './type';
+import {timing} from './util/debug';
 
 const outputSolution = async (day: number, part: number): Promise<string> => {
 	const {default: solver} = (await import(
@@ -14,7 +15,12 @@ const outputSolution = async (day: number, part: number): Promise<string> => {
 		{encoding: 'utf8'},
 	);
 
-	return `Day ${day} | Part ${part} - Solution: ${solver(input)}`;
+	return `Day ${day} | Part ${part} - Solution: ${timing('duration')(
+		(s: string) => {
+			solver(s);
+			return solver(s);
+		},
+	)(input)}`;
 };
 
 const validate = (type: 'day' | 'part', number_: number, max: number) => {

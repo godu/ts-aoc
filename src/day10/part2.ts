@@ -4,8 +4,8 @@ import * as E from 'fp-ts/lib/Either';
 import * as NEA from 'fp-ts/lib/NonEmptyArray';
 import type * as M from 'fp-ts/lib/Monoid';
 import {type Solver} from '../type';
-import {inRange} from '../day09/part1';
 import {parse} from '../util/parser';
+import {inRange} from '../util';
 import {cycles, inputParser} from './part1';
 
 const getMonoidJoin = (char: string): M.Monoid<string> => ({

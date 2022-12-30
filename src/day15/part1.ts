@@ -10,7 +10,7 @@ import {stringify} from 'fp-ts/lib/Json';
 import {type Solver} from '../type';
 import * as PP from '../util/point';
 import {add, endOfFile, endOfLine, parse} from '../util/parser';
-import {inRange} from '../day09/part1';
+import {inRange} from '../util';
 
 const sensorParser = pipe(
 	string.string('Sensor at x='),

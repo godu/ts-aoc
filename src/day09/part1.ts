@@ -12,10 +12,10 @@ import * as E from 'fp-ts/lib/Either';
 import * as O from 'fp-ts/lib/Option';
 import {char, parser, string} from 'parser-ts';
 import {stringify} from 'fp-ts/lib/Json';
-import * as M from '../util/matrix';
 import * as P from '../util/point';
 import {type Solver} from '../type';
 import {add, endOfFile, endOfLine, parse, space} from '../util/parser';
+import {inRange} from '../util';
 
 type Direction = 'R' | 'U' | 'L' | 'D';
 type Command = [Direction, number];
@@ -51,11 +51,6 @@ const move = (direction: Direction) =>
 		: direction === 'U'
 		? moveUp
 		: moveDown;
-
-export const inRange =
-	(min: number, max: number) =>
-	(x: number): boolean =>
-		min <= x && x <= max;
 
 const isTouching =
 	([px, py]: P.Point) =>

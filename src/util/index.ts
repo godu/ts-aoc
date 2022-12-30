@@ -21,3 +21,8 @@ export const groupBy =
 		F.foldMap(M.getMonoid(E, S))<A>(as, (a) => M.singleton(ak(a), a));
 
 export const pairs = <A>(a: A[]) => A.zip(a, A.dropLeft(1)(a));
+
+export const inRange =
+	(min: number, max: number) =>
+	(x: number): boolean =>
+		min <= x && x <= max;
