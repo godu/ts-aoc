@@ -284,7 +284,7 @@ export const unfold = <A, B>(
 	*[Symbol.iterator]() {
 		let bb = b;
 		while (true) {
-			const orn = f(b);
+			const orn = f(bb);
 
 			if (O.isNone(orn)) return;
 

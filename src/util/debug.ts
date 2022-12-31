@@ -2,7 +2,7 @@ import {hrtime} from 'node:process';
 import {identity} from 'fp-ts/lib/function';
 import {type Show} from 'fp-ts/lib/Show';
 
-const unknownShow: Show<unknown> = {
+export const unknownShow: Show<unknown> = {
 	show: (v) => JSON.stringify(v, null, 4),
 };
 
@@ -16,8 +16,9 @@ export const traceShowId =
 
 export const traceId =
 	(message: string) =>
-	<A>(value: A): A => {
-		return traceShowId<A>(unknownShow)(message)(value);
+	<T>(value: T): T => {
+		console.log(message, value);
+		return value;
 	};
 
 export const traceStringId = traceShowId<string>({
