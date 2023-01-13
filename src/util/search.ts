@@ -128,27 +128,3 @@ export const dfs = <State, Cost>(
 			I.map(NEA.map(T.snd)),
 		);
 };
-
-export const dfs = <State, Cost>(
-	sOrd: Ord.Ord<State>,
-	cMonoidOrd: Monoid<Cost> & Ord.Ord<Cost>,
-) => {
-	type StatesWithCost = NEA.NonEmptyArray<[Cost, State]>;
-	const statesWithCostOrd: Ord.Ord<StatesWithCost> =
-		Ord.getSemigroup<StatesWithCost>().concat(
-			pipe(cMonoidOrd, Ord.contramap(flow(NEA.head, T.fst))),
-			pipe(sOrd, Ord.contramap(flow(NEA.head, T.snd))),
-		);
-	return (
-		next: (state: State) => State[],
-		cost: (from: State, to: State) => Cost,
-		found: (state: State) => boolean,
-	): ((initial: State) => Iterable<NEA.NonEmptyArray<State>>) =>
-		flow(
-			generalizedSearch(sOrd, cMonoidOrd)(next, cost, (a, b) => {
-				return statesWithCostOrd.compare(a, b) === 1;
-			}),
-			I.filter(([[, s]]) => found(s)),
-			I.map(NEA.map(T.snd)),
-		);
-};
