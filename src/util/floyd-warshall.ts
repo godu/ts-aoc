@@ -7,7 +7,7 @@ import {type Ord} from 'fp-ts/lib/Ord';
 import {min, type Semigroup} from 'fp-ts/lib/Semigroup';
 import * as I from './iterable';
 
-type Graph<Node, Cost> = Map<Node, Map<Node, Cost>>;
+export type Graph<Node, Cost> = Map<Node, Map<Node, Cost>>;
 
 const toNodeSet = <Node, Cost>(nodeOrd: Ord<Node>) => {
 	return (graph: Graph<Node, Cost>) =>
@@ -22,7 +22,7 @@ const toNodeSet = <Node, Cost>(nodeOrd: Ord<Node>) => {
 		);
 };
 
-type ShortestPath<Node, Cost> = Map<Node, Map<Node, Cost>>;
+export type ShortestPath<Node, Cost> = Map<Node, Map<Node, Cost>>;
 
 export const gaussJordanFloydWarshallMcNaughtonYamada =
 	<Node, Cost>(
@@ -36,15 +36,19 @@ export const gaussJordanFloydWarshallMcNaughtonYamada =
 			(graph: Graph<Node, Cost>) => (paths: ShortestPath<Node, Cost>) =>
 				pipe(
 					paths,
-					M.map(
-						M.foldMapWithIndex(nodeOrd)(
-							M.getMonoid(nodeOrd, min(costOrdAndSemigroup)),
-						)((from, cost) =>
-							pipe(
-								graph,
-								M.lookup(nodeOrd)(from),
-								O.getOrElse<Map<Node, Cost>>(constant(M.empty)),
-								M.map((c): Cost => costOrdAndSemigroup.concat(cost, c)),
+					M.mapWithIndex((to, m) =>
+						pipe(
+							m,
+							M.foldMapWithIndex(nodeOrd)(
+								M.getMonoid(nodeOrd, min(costOrdAndSemigroup)),
+							)((from, cost) =>
+								pipe(
+									graph,
+									M.lookup(nodeOrd)(from),
+									O.getOrElse<Map<Node, Cost>>(constant(M.empty)),
+									M.deleteAt(nodeOrd)(to),
+									M.map((c): Cost => costOrdAndSemigroup.concat(cost, c)),
+								),
 							),
 						),
 					),

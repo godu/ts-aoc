@@ -35,13 +35,12 @@ const generalizedSearch = <State, Cost>(
 						);
 
 						if (O.isNone(bestState)) return O.none;
-
 						const [[cost_, state]] = bestState.value;
 						const resttoExplore = pipe(
 							toExplore,
 							A.filter((a) => a !== bestState.value),
 						);
-
+						console.log({visitedState});
 						return pipe(
 							visitedState,
 							S.elem(sEq)(state),
